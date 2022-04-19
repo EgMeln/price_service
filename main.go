@@ -28,7 +28,9 @@ func main() {
 		Addr:     redisCfg.Addr,
 		Password: redisCfg.Password,
 		DB:       redisCfg.DB})
-
+	if _, ok := redisClient.Ping().Result(); ok != nil {
+		log.Fatalf("redis new client error %v", ok)
+	}
 	priceMap := map[string]*model.GeneratedPrice{
 		"Aeroflot": {},
 		"ALROSA":   {},
@@ -60,7 +62,7 @@ func main() {
 }
 
 func runGRPC(priceServer *server.PriceServer) {
-	listener, err := net.Listen("tcp", "localhost:8089")
+	listener, err := net.Listen("tcp", ":8089")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
